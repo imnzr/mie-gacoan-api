@@ -15,6 +15,7 @@ type UserRepositoryInterface interface {
 
 	UpdateEmail(ctx context.Context, tx *sql.Tx, user models.User) (models.User, error)
 	UpdatePassword(ctx context.Context, tx *sql.Tx, user models.User) (models.User, error)
+	UpdateUsername(ctx context.Context, tx *sql.Tx, user models.User) (models.User, error)
 
 	Login(ctx context.Context, tx *sql.Tx, user models.User) (models.User, error)
 	// forgot-password
