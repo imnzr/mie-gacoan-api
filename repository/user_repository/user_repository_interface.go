@@ -12,6 +12,7 @@ type UserRepositoryInterface interface {
 	Delete(ctx context.Context, tx *sql.Tx, user models.User) (models.User, error)
 	FindById(ctx context.Context, tx *sql.Tx, userId int) (models.User, error)
 	FindByAll(ctx context.Context, tx *sql.Tx) ([]models.User, error)
+	FindByEmail(ctx context.Context, tx *sql.Tx, email string) (models.User, error)
 
 	UpdateEmail(ctx context.Context, tx *sql.Tx, user models.User) (models.User, error)
 	UpdatePassword(ctx context.Context, tx *sql.Tx, user models.User) (models.User, error)
