@@ -10,6 +10,25 @@ import (
 
 type UserRepositoryImplementation struct{}
 
+// UpdateUsername implements UserRepositoryInterface.
+func (u *UserRepositoryImplementation) UpdateUsername(ctx context.Context, tx *sql.Tx, user models.User) (models.User, error) {
+	query := "UPDATE user SET username = ? WHERE id = ?"
+	result, err := tx.ExecContext(ctx, query, user.Username, user.Id)
+	if err != nil {
+		return models.User{}, fmt.Errorf("failed to execute query: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return models.User{}, fmt.Errorf("failed to fetch rows affected: %w", err)
+	}
+	if rowsAffected == 0 {
+		return models.User{}, fmt.Errorf("no rows updated, user with ID %d may not exist", user.Id)
+	}
+
+	return user, nil
+}
+
 // Create implements UserRepositoryInterface.
 func (u *UserRepositoryImplementation) Create(ctx context.Context, tx *sql.Tx, user models.User) (models.User, error) {
 	query := "INSERT INTO user(username, email, password) VALUES(?,?,?)"
