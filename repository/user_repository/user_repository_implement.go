@@ -10,6 +10,28 @@ import (
 
 type UserRepositoryImplementation struct{}
 
+// FindByEmail implements UserRepositoryInterface.
+func (u *UserRepositoryImplementation) FindByEmail(ctx context.Context, tx *sql.Tx, email string) (models.User, error) {
+	query := "SELECT id, username, email, password FROM user WHERE email = ?"
+	rows, err := tx.QueryContext(ctx, query, email)
+	if err != nil {
+		return models.User{}, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	user := models.User{}
+
+	if rows.Next() {
+		err := rows.Scan(&user.Id, &user.Username, &user.Email, &user.Password)
+		if err != nil {
+			return models.User{}, fmt.Errorf("failed to scan row: %w", err)
+		}
+		return user, nil
+	} else {
+		return models.User{}, fmt.Errorf("user with email %s not found", email)
+	}
+}
+
 // UpdateUsername implements UserRepositoryInterface.
 func (u *UserRepositoryImplementation) UpdateUsername(ctx context.Context, tx *sql.Tx, user models.User) (models.User, error) {
 	query := "UPDATE user SET username = ? WHERE id = ?"
